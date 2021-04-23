@@ -2,52 +2,43 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Arr;
-use phpDocumentor\Reflection\Types\This;
-use Spatie\YamlFrontMatter\YamlFrontMatter;
-use Illuminate\Support\Facades\File;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Post
+class Post extends Model
 {
+    use HasFactory;
+    protected $table = 'post';
 
-    public $title;
-    public $excrept;
-    public $date;
-    public $body;
+    protected $primaryKey = 'postid';
 
-    public function __construct($title, $excrept, $date, $body)
+    protected $fillable = [
+        'content',
+        'userid',
+        'username',
+    ];
+
+    public static function findAll()
     {
-        $this->excrept = $excrept;
-        $this->date = $date;
-        $this->title = $title;
-        $this->body = $body;
-    }
+        $friends = friend::where("userid", "=", session('id'))->get();
 
-    public static function find($slug)
-    {
-        $posts = static::all();
-        foreach ($posts as $post) {
-            if ($post->title == $slug) {
-                return $post;
+        $allposts = [];
+        $x = 0;
+        foreach ($friends as $friend) {
+            $posts = Post::where('userid', '=', $friend->friendid)->get();
+            foreach ($posts as $post) {
+                $allposts[$x++] = $post;
             }
         }
-        throw new ModelNotFoundException();
+        return $allposts;
     }
-    public static function all()
-    {
-        return cache()->rememberForever('posts.all', function () {
-            $files =  File::files(resource_path("/posts"));
 
-            $posts = [];
-
-            foreach ($files as $file) {
-                $document = YamlFrontMatter::parseFile($file);
-                $posts[] = new Post($document->title, $document->excerpt, $document->date, $document->body());
-            }
-            rsort($posts);
-
-            return $posts;
-        });
+    public static function createPost(){
+        $content = $_POST['content'];
+        $post = new Post();
+        $post->userid = session('id');
+        $post->content = $content;
+        $post->username = session('username');
+        $post->save();
     }
 }

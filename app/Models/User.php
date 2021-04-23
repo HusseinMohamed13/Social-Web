@@ -16,6 +16,10 @@ class User extends Authenticatable
      *
      * @var array
      */
+    protected $table = 'user';
+
+    protected $primaryKey = 'userid';
+
     protected $fillable = [
         'name',
         'email',
@@ -40,4 +44,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public static function loginAuthentication()
+    {
+        $email = $_POST['email'];
+        $pass = $_POST['password'];
+
+        $res = User::where([
+            ["password", "=", $pass],
+            ["email", "=", $email]
+        ])->first();
+
+        if ($res != null) {
+            session(['id' => $res->userid]);
+            session(['username' => $res->name]);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

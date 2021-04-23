@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\friend;
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
+use App\Models\User;
 
 
 
@@ -16,16 +18,44 @@ use App\Models\Post;
 |
 */
 
-Route::get('/', function () {
-
-    return view("welcome",[
-        'posts' => Post::all()
-    ]);  
+Route::get('login', function () {
+    session()->forget(['id', 'username']);
+    
+    return view("login");
 });
 
-Route::get('post/{p}', function ($slug) {
+Route::post('logauth', function () {
+    if (User::loginAuthentication()) {
+        return view("home", [
+            'posts' => Post::findAll()
+        ]);
+    } else {
+        return view("login");
+    }
+});
 
-    return view("post",[
-    'post' => Post::find($slug)
+Route::post('follow', function () {
+    friend::addFriend();
+
+    return view("home", [
+        'posts' => Post::findAll()
     ]);
+});
+
+Route::post('post', function () {
+    Post::createPost();
+
+    return view("home", [
+        'posts' => Post::findAll()
+    ]);
+});
+
+Route::get('home', function () {
+    if (session()->has('id')) {
+        return view("home", [
+            'posts' => Post::findAll()
+        ]);
+    } else {
+        return view('login');
+    }
 });
