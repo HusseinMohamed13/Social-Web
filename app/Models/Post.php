@@ -24,6 +24,7 @@ class Post extends Model
         $friends = friend::where("userid", "=", session('id'))->get();
 
         $allposts = [];
+        
         $x = 0;
         foreach ($friends as $friend) {
             $posts = Post::where('userid', '=', $friend->friendid)->get();
