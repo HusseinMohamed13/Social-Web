@@ -21,6 +21,7 @@ class ExampleTest extends TestCase
 
         $response->assertViewIs('login');
     }
+    /*
     public function test_home_request_with_logged_user()
     {
         $posts = [];
@@ -28,7 +29,7 @@ class ExampleTest extends TestCase
         $posts[0]->username = 'me';
         $posts[0]->content = "mocking post";
         $posts[0]->created_at = "2021-04-22 14:54:15";
-       
+
         $client_mock = \Mockery::mock('App\Models\Post');
         $client_mock->shouldReceive('findAll')->andReturn($posts);
 
@@ -36,7 +37,7 @@ class ExampleTest extends TestCase
 
         $response->assertViewIs('home');
         
-    }
+    }*/
     public function test_home_request_with_notlogged_user()
     {
         $response = $this->get('home');
