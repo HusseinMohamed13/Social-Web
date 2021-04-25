@@ -31,6 +31,7 @@ class Post extends Model
                 $allposts[$x++] = $post;
             }
         }
+        rsort($allposts);
         return $allposts;
     }
 

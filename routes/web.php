@@ -59,3 +59,4 @@ Route::get('home', function () {
         return view('login');
     }
 });
+

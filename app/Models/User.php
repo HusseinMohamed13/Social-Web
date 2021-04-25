@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Model
 {
@@ -25,16 +26,20 @@ class User extends Model
         $pass = $_POST['password'];
 
         $res = User::where([
-            ["password", "=", $pass],
             ["email", "=", $email]
         ])->first();
 
         if ($res != null) {
-            session(['id' => $res->userid]);
-            session(['username' => $res->name]);
-            return true;
-        } else {
+            if(hash::check($pass,$res->password)){
+                session(['id' => $res->userid]);
+                session(['username' => $res->name]);
+                return true;
+            }else{
+                return false;
+            } 
+        }else{
             return false;
-        }
+        } 
+
     }
 }

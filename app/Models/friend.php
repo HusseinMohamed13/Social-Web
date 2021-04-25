@@ -29,6 +29,8 @@ class friend extends Model
             $friend->userid = session('id');
             $friend->friendid = $friendid;
             $friend->save();
+            return true;
         }
+        return false;
     }
 }
